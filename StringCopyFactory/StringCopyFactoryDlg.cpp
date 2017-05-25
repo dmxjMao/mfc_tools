@@ -1,16 +1,32 @@
 
-// mfc_toolsDlg.cpp : implementation file
+// StringCopyFactoryDlg.cpp : implementation file
 //
 
 #include "stdafx.h"
-#include "mfc_tools.h"
-#include "mfc_toolsDlg.h"
+#include "StringCopyFactory.h"
+#include "StringCopyFactoryDlg.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+namespace {
+	//struct FmtSymbolContext {
+	//	int nPrefix;//前缀长度
+	//	std::string suffix;//后缀
+	//};
+
+	//匹配格式控制符
+	boost::regex g_regexTemplateStr;
+
+	//无法知道正则匹配了哪种类型，只能用笨方法了
+	std::map<std::string, CStringCopyFactoryDlg::FmtType> g_mapFmtType =
+	{
+		{"%d",CStringCopyFactoryDlg::FmtType::INTEGER},
+		{"%f",CStringCopyFactoryDlg::FmtType::FLOAT} 
+	};
+}
 
 // CAboutDlg dialog used for App About
 
@@ -45,32 +61,40 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// Cmfc_toolsDlg dialog
+// CStringCopyFactoryDlg dialog
 
 
 
-Cmfc_toolsDlg::Cmfc_toolsDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_MFC_TOOLS_DIALOG, pParent)
+CStringCopyFactoryDlg::CStringCopyFactoryDlg(CWnd* pParent /*=NULL*/)
+	: CDialogEx(IDD_STRINGCOPYFACTORY_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+	try {
+		g_regexTemplateStr.assign(("(%d)|(%f)"));
+	}
+	catch (boost::regex_error e) {
+
+	}
 }
 
-void Cmfc_toolsDlg::DoDataExchange(CDataExchange* pDX)
+void CStringCopyFactoryDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT1, m_edit1);
 }
 
-BEGIN_MESSAGE_MAP(Cmfc_toolsDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CStringCopyFactoryDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON1, &Cmfc_toolsDlg::OnBnClickedButton1)
+	ON_EN_CHANGE(IDC_EDIT1, &CStringCopyFactoryDlg::OnChangeEdit1)
 END_MESSAGE_MAP()
 
 
-// Cmfc_toolsDlg message handlers
+// CStringCopyFactoryDlg message handlers
 
-BOOL Cmfc_toolsDlg::OnInitDialog()
+BOOL CStringCopyFactoryDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -100,11 +124,12 @@ BOOL Cmfc_toolsDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	//m_edit1.ModifyStyle(0, ES_MULTILINE | ES_WANTRETURN);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void Cmfc_toolsDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CStringCopyFactoryDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -121,7 +146,7 @@ void Cmfc_toolsDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void Cmfc_toolsDlg::OnPaint()
+void CStringCopyFactoryDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -148,59 +173,47 @@ void Cmfc_toolsDlg::OnPaint()
 
 // The system calls this function to obtain the cursor to display while the user drags
 //  the minimized window.
-HCURSOR Cmfc_toolsDlg::OnQueryDragIcon()
+HCURSOR CStringCopyFactoryDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
 
 
-void Cmfc_toolsDlg::OnBnClickedButton1()
+void CStringCopyFactoryDlg::OnOK()
 {
-	static int nMaxFileNum = 50;//最多50个文件
+	// TODO: Add your specialized code here and/or call the base class
 
-	//获取编辑框后缀名
-	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT1);
-	CString strExt;
-	pEdit->GetWindowText(strExt);
-	if (strExt.IsEmpty()) return;
-
-	//去掉输入的'.'
-	strExt.Trim(_T('.'));
-
-	CFileDialog fileDlg(TRUE);
-	OPENFILENAME& ofn = fileDlg.GetOFN();
-	ofn.Flags |= OFN_ALLOWMULTISELECT;
-	CString strBuf;//存储文件列表的buf
-	LPTSTR pBuf = strBuf.GetBuffer(nMaxFileNum * MAX_PATH);
-	ofn.lpstrFile = pBuf;
-	ofn.nMaxFile = nMaxFileNum * MAX_PATH;
-
-	bool bSuccess = true;
-	if (IDOK == fileDlg.DoModal()) {
-		//多选之后，pathName是上层文件夹
-		CString& pathName = fileDlg.GetPathName();
-
-		int ptPos = 0;//'.'位置
-		POSITION pos = fileDlg.GetStartPosition();		
-		while (pos) {
-			pathName = fileDlg.GetNextPathName(pos);
-			ptPos = pathName.Find(_T('.'));//查找第一个'.'
-			if (-1 == ptPos) {
-				bSuccess = false;
-				continue;
-			}
-				
-			//构造新文件名
-			CString tmpStr = pathName.Left(ptPos + 1);
-			tmpStr += strExt;
-			CFile::Rename(pathName, tmpStr);
-		}
-	}
-	strBuf.ReleaseBuffer();
-	CString strMsg =
-		bSuccess ? _T("转换成功！") : _T("有未成功转换后缀的文件，请检查！");
-	AfxMessageBox(strMsg);
+	//CDialogEx::OnOK();
 }
 
 
+
+
+void CStringCopyFactoryDlg::OnChangeEdit1()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialogEx::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+	m_edit1.GetWindowText(m_templateStr);
+
+	//匹配格式控制符
+	CT2A psz(m_templateStr.GetBuffer());
+	std::string textStr(psz);
+	boost::sregex_iterator itStart(textStr.begin(), textStr.end(), g_regexTemplateStr);
+	boost::sregex_iterator itEnd;
+
+	m_vecFmt.clear();
+	for (; itStart != itEnd; ++itStart) {
+		const boost::smatch& sm = *itStart;
+		const std::string& str = sm.str();
+		m_vecFmt.push_back(g_mapFmtType[str]);
+	}
+
+	//CString str;
+	//str.Format(_T("%d"), m_vecFmt.size());
+	//AfxMessageBox(str);
+}
