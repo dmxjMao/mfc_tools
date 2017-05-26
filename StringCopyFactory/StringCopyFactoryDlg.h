@@ -26,7 +26,15 @@ public:
 	//格式枚举
 	enum FmtType {
 		INTEGER,
-		FLOAT
+		FLOAT,
+		LOWER_ALPHA,
+		UPPER_ALPHA,
+		ANY_ALPHA,
+		PRINT_ALPHA,
+		LOWER_STRING,
+		UPPER_STRING,
+		ANY_STRING,
+		CHINESE
 	};
 	std::vector<FmtType>				m_vecFmt;//格式控制符
 	CString								m_templateStr;//模板字符串
@@ -50,4 +58,9 @@ protected:
 private:
 	//动态创建格式控制按钮
 	void doCreateFmtButton();
+	//判断是否需要创建格式控制按钮
+	bool doJudgeFmtChange();
+public:
+	CSplitButton m_abc;
+	afx_msg void OnIntRandpositive();
 };
