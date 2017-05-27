@@ -4,8 +4,9 @@
 
 #pragma once
 #include "afxwin.h"
+#include "MyFmtSplitBtn.h"
 
-//enum FmtType : int;//前置声明
+//struct CMyFmtSplitBtn::FmtContext;
 
 // CStringCopyFactoryDlg dialog
 class CStringCopyFactoryDlg : public CDialogEx
@@ -23,24 +24,9 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
 public:
-	//格式枚举
-	enum FmtType {
-		INTEGER,
-		FLOAT,
-		LOWER_ALPHA,
-		UPPER_ALPHA,
-		ANY_ALPHA,
-		PRINT_ALPHA,
-		LOWER_STRING,
-		UPPER_STRING,
-		ANY_STRING,
-		CHINESE
-	};
-	std::vector<FmtType>				m_vecFmt;//格式控制符
-	CString								m_templateStr;//模板字符串
-	//map,multimap会给你排序！
-	//std::map<FmtType, std::shared_ptr<CSplitButton>>	m_mapExistFmt;//已创建的格式控制按钮
-	std::vector<std::tuple<FmtType, std::shared_ptr<CSplitButton>>> m_vecExistFmt;
+	CString												m_templateStr;//模板字符串
+	std::vector<CMyFmtSplitBtn::FmtContext>				m_vecFmt;//新匹配的格式
+	std::vector<CMyFmtSplitBtn::FmtContext>				m_vecExistFmt;//已创建的格式
 
 // Implementation
 protected:
@@ -51,16 +37,20 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	//模板字符串变化
 	afx_msg void OnChangeEdit1();
 	DECLARE_MESSAGE_MAP()
 	CEdit m_edit1;
 	virtual void OnOK();
 private:
+	//读取按钮菜单
+	void doReadMenu();
+	//赋值行号
+	void doSetFmtLineno();
 	//动态创建格式控制按钮
 	void doCreateFmtButton();
 	//判断是否需要创建格式控制按钮
 	bool doJudgeFmtChange();
+
 public:
-	CSplitButton m_abc;
-	afx_msg void OnIntRandpositive();
 };
