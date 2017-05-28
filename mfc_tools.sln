@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mfc_tools", "mfc_tools\mfc_tools.vcxproj", "{44DC2222-D58B-40D5-B85A-2A342A705598}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileExtChange", "mfc_tools\FileExtChange.vcxproj", "{44DC2222-D58B-40D5-B85A-2A342A705598}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StringCopyFactory", "StringCopyFactory\StringCopyFactory.vcxproj", "{6AF10B2B-7D99-49A1-B3E8-39464CE0BA02}"
 EndProject

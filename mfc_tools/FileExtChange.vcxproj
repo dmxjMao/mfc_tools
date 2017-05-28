@@ -181,15 +181,15 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="mfc_tools.h" />
-    <ClInclude Include="mfc_toolsDlg.h" />
+    <ClInclude Include="FileExtChange.h" />
+    <ClInclude Include="FileExtChangeDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mfc_tools.cpp" />
-    <ClCompile Include="mfc_toolsDlg.cpp" />
+    <ClCompile Include="FileExtChange.cpp" />
+    <ClCompile Include="FileExtChangeDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -198,20 +198,20 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="mfc_tools.rc" />
+    <ResourceCompile Include="FileExtChange.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\mfc_tools.rc2" />
+    <None Include="res\FileExtChange.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\mfc_tools.ico" />
+    <Image Include="res\FileExtChange.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="mfc_tools.rc" />
+      <UserProperties RESOURCE_FILE="FileExtChange.rc" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

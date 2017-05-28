@@ -53,4 +53,45 @@ private:
 	bool doJudgeFmtChange();
 
 public:
+	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
+	afx_msg void OnClickedGenerate();
+};
+
+////一个绑定菜单项的结构
+//struct MenuItem {
+//	TCHAR	szTitle[10] = { 0 };//菜单文本 9个字
+//	UINT	nID = -1;//菜单ID
+//	int		len = 0;//附加参数的长度
+//	void*	lpParam = nullptr;//菜单附加参数
+//	
+//	union MenuItemFunc{
+//		void(*v_ii)(int, int);
+//		void(*v_ff)(float, float);
+//	} func;//菜单函数指针
+//
+//	MenuItem(TCHAR* sz, UINT id, int l, void* lp, MenuItemFunc u) {
+//		memcpy(szTitle, sz, 10);
+//		nID = id;
+//		len = l;
+//		memcpy(lpParam, lp, len);
+//		func = u;
+//	}
+//};
+
+enum class RandType;
+//生成按钮标识符的方式
+//UINT_PTR GenerateMenuID(int nBtnIdx, int nItemIdx);
+//随机生成范围内的整数
+int RandInt(RandType t, int a = 0, int b = 0);
+//随机生成范围内的小数
+float RandFloat(RandType t, float a = 0, float b = 0);
+
+class stream_visit : public boost::static_visitor<> {
+	std::wostream& m_os;
+public:
+	stream_visit(std::wostream& os) : m_os(os) {}
+	template<typename T>
+	void operator()(T& t) const {
+		m_os << t;
+	}
 };

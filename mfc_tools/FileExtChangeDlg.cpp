@@ -3,8 +3,8 @@
 //
 
 #include "stdafx.h"
-#include "mfc_tools.h"
-#include "mfc_toolsDlg.h"
+#include "FileExtChange.h"
+#include "FileExtChangeDlg.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG

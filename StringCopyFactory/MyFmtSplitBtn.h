@@ -1,12 +1,12 @@
 #pragma once
 //#include <memory>
 //#include <string>
-
+#include <boost\variant.hpp> //
 
 
 class CMyFmtSplitBtn : public CSplitButton
 {
-	//定义
+	//类型声明
 public:
 	//格式枚举
 	enum FmtType {
@@ -22,6 +22,7 @@ public:
 		CHINESE,
 		FmtTypeBuf
 	};
+	//匹配上下文
 	struct FmtContext {
 		FmtType type = FmtTypeBuf;//匹配的格式类型
 		int line = 0;//所在的行
@@ -38,25 +39,33 @@ public:
 	DECLARE_MESSAGE_MAP()
 public:
 	CMyFmtSplitBtn() {}
-	CMyFmtSplitBtn(FmtType t) : m_type(t) {}
+	CMyFmtSplitBtn(FmtType t,int idx) : m_type(t), m_idx(idx) {}
 
 	inline void SetSize(int w, int h) { m_size.cx = w; m_size.cy = h; }
 	inline const CSize& GetSize() { return m_size; }
+	//处理菜单消息
+	void OnMenuMsg(UINT nID);
+	static int					m_curBtn;//当前正在处理的按钮索引
+	UINT						m_curID;//按钮被选择的菜单ID
+	afx_msg void OnDropDown(NMHDR *pNMHDR, LRESULT *pResult);
 
 protected:
 private:
 	//属性
 public:
+	//boost::variant<
+	//	std::vector<int>,
+	//	std::vector<float>,
+	//	std::vector<char>,
+	//	std::vector<std::string>
+	//>	m_data;//格式按钮产生的数据
+	boost::variant<int, float, char, std::wstring> m_data;
+
 protected:
 	CSize				m_size;//按钮的宽高
-	//CMenu				m_menu;//按钮菜单，初始化读取
+	
 
 private:
-	FmtType				m_type;
-	union {//格式按钮产生的数据
-		int n;
-		float f;
-		char c;
-		//std::string;
-	};
+	FmtType				m_type;//按钮代表的类型
+	int					m_idx;//按钮索引
 };
