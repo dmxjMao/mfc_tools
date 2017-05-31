@@ -75,6 +75,7 @@ enum class RandType {
 	CMenu g_subMenu[FmtType::FmtTypeBuf];//必须附加到主菜单
 	//一个按钮绑定的菜单
 	//std::map<FmtType, std::vector<MenuItem>>	g_mapMenuOfBtn;
+	vector<CString>	g_fixStr;//固定不变的字符串
 //}
 
 // CAboutDlg dialog used for App About
@@ -146,6 +147,21 @@ void CStringCopyFactoryDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL CStringCopyFactoryDlg::OnInitDialog()
 {
+	struct DD{};
+	struct ABC {
+		int aa = 0;
+		shared_ptr<DD> dd = nullptr;
+
+		ABC(int a, shared_ptr<DD> d) : aa(a), dd(d) {}
+	};
+	vector<ABC> v = {
+		ABC(1, std::make_shared<DD>()),
+		ABC(2, std::make_shared<DD>())
+	};
+
+	auto it = v.begin();
+	v.erase(it, v.end());
+
 	CDialogEx::OnInitDialog();
 
 	// Add "About..." menu item to system menu.
@@ -238,7 +254,7 @@ void CStringCopyFactoryDlg::doReadMenu()
 //随机生成范围内的整数
 int RandInt(RandType t, int a, int b)
 {
-	std::default_random_engine e((unsigned)time(0));
+	static std::default_random_engine e;
 	std::uniform_int_distribution<int> u;
 	switch (t)
 	{
@@ -499,6 +515,7 @@ bool CStringCopyFactoryDlg::doJudgeFmtChange()
 		//查不匹配位置，在vExist中移动增加的元素
 		pair<vecFmtIter, vecFmtIter> misPos = 
 			mismatch(vExist.begin(), vExist.end(), v.begin(), MismatchFunc);
+		//成员spBtn是智能指针，它在堆上，erase调用析构，
 		vExist.erase(misPos.first, vExist.end());
 		for (auto it = misPos.second; it != v.end(); ++it) {
 			//移动
@@ -511,6 +528,9 @@ bool CStringCopyFactoryDlg::doJudgeFmtChange()
 		pair<vecFmtIter, vecFmtIter> misPos = 
 			mismatch(v.begin(), v.end(), vExist.begin(), MismatchFunc);
 		vExist.erase(misPos.second, vExist.end());
+		//vExist.clear();
+		//vExist.erase(std::remove_if(misPos.second, vExist.end(), 
+		//	[](const FmtContext&) { return 1; }));
 		for (auto it = misPos.first; it != v.end(); ++it) {
 			//vExist.emplace_back(std::make_tuple(*it, nullptr));
 			vExist.emplace_back(*it);
@@ -587,13 +607,24 @@ void CStringCopyFactoryDlg::OnClickedGenerate()
 		return;
 	}
 
+	//获取固定的字符串
+	g_fixStr.clear();
+	int prevPos = 0, pos = 0;
+	for (auto& ctx : m_vecExistFmt) {
+		pos = ctx.pos;
+		g_fixStr.emplace_back(m_templateStr.Mid(prevPos, pos - prevPos));
+		prevPos = pos + g_fmtLen[ctx.type];
+	}
+	g_fixStr.emplace_back(m_templateStr.Right(m_templateStr.GetLength() - prevPos));
+
 	int nNeed = _ttoi(str);//需要几份
 	str = "";//
-	int prevPos = 0, pos = 0;//拼接字符串使用
 	CString tmpStr;
+	size_t len = m_vecExistFmt.size();
 	for (int i = 0; i < nNeed; ++i) {
 		//因为不知道boost::variant<std::vector<int>,..> 怎么赋值，所以改为这种方法
-		for (auto& ctx : m_vecExistFmt) {
+		for (/*auto& ctx : m_vecExistFmt*/size_t idx = 0; idx < len; ++idx) {
+			auto& ctx = m_vecExistFmt[idx];
 			auto& spBtn = ctx.spBtn;
 			UINT_PTR menuID = spBtn->m_curID;
 
@@ -618,14 +649,14 @@ void CStringCopyFactoryDlg::OnClickedGenerate()
 			//拼接数据
 			std::wostringstream os;
 			boost::apply_visitor(stream_visit(os), data);
-			pos = ctx.pos;
+			//pos = ctx.pos;
 			std::wstring s = os.str();
 			tmpStr.Format(_T("%s"),os.str().c_str());
-			str += m_templateStr.Mid(prevPos, pos - prevPos) + tmpStr;
-			prevPos = pos + g_fmtLen[ctx.type];
+			str += g_fixStr[idx] + tmpStr;
+			//prevPos = pos + g_fmtLen[ctx.type];
 		}
 		//累计剩下的字符
-		str += m_templateStr.Right(m_templateStr.GetLength() - prevPos) + _T("\r\n");
+		str += /*m_templateStr.Right(m_templateStr.GetLength() - prevPos)*/g_fixStr[len] + _T("\r\n");
 	}
 
 	GetDlgItem(IDC_Display)->SetWindowText(str);

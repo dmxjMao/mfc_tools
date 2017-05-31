@@ -42,10 +42,10 @@
     <ClInclude Include="MyFmtSplitBtn.h">
       <Filter>MyControl</Filter>
     </ClInclude>
-    <ClInclude Include="CustomIntDlg.h">
+    <ClInclude Include="CustomFloatDlg.h">
       <Filter>MyDialog</Filter>
     </ClInclude>
-    <ClInclude Include="CustomFloatDlg.h">
+    <ClInclude Include="CustomIntDlg.h">
       <Filter>MyDialog</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,10 +62,10 @@
     <ClCompile Include="MyFmtSplitBtn.cpp">
       <Filter>MyControl</Filter>
     </ClCompile>
-    <ClCompile Include="CustomIntDlg.cpp">
+    <ClCompile Include="CustomFloatDlg.cpp">
       <Filter>MyDialog</Filter>
     </ClCompile>
-    <ClCompile Include="CustomFloatDlg.cpp">
+    <ClCompile Include="CustomIntDlg.cpp">
       <Filter>MyDialog</Filter>
     </ClCompile>
   </ItemGroup>

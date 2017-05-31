@@ -33,6 +33,15 @@ public:
 
 		FmtContext(FmtType t, int l, int p/*int lenp, int lens*/, decltype(spBtn) sp = nullptr)
 			: type(t), line(l), pos(p)/*lenPrefix(lenp), lenSuffix(lens)*/, spBtn(sp) {}
+
+		~FmtContext(){
+			if (spBtn) { //CMyFmtSplitBtn 绑定了菜单资源的，它不能删
+				//spBtn->DestroyWindow();
+				//spBtn.reset();
+				//spBtn.~shared_ptr();
+				spBtn->m_pMenu = nullptr;
+			}
+		}
 	};
 
 	//方法
