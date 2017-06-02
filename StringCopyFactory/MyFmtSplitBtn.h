@@ -43,6 +43,13 @@ public:
 			}
 		}
 	};
+	//按钮参数
+	struct IntParam{
+		IntParam(int _a = 0,int _b = 0) : a(_a),b(_b){}
+		int a = 0; int b = 0;
+	};
+	//struct FloatParam{};
+	
 
 	//方法
 	DECLARE_MESSAGE_MAP()
@@ -69,6 +76,9 @@ public:
 	//	std::vector<std::string>
 	//>	m_data;//格式按钮产生的数据
 	boost::variant<int, float, char, std::wstring> m_data;
+	//按钮参数
+	boost::variant<IntParam> m_param;
+
 
 protected:
 	CSize				m_size;//按钮的宽高

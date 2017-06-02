@@ -1,7 +1,7 @@
 #include"stdafx.h"
 #include "MyFmtSplitBtn.h"
 #include "resource.h"
-
+#include "CustomIntDlg.h"
 
 int CMyFmtSplitBtn::m_curBtn = -1;
 
@@ -14,32 +14,17 @@ END_MESSAGE_MAP()
 void CMyFmtSplitBtn::OnMenuMsg(UINT nID)
 {
 	m_curID = nID;
-	////如果点击了自定义
-	//extern CMenu g_subMenu[FmtType::FmtTypeBuf];
-	//extern UINT_PTR GenerateMenuID(int nBtnIdx, int nItemIdx);
-	//
-	//CMenu& menu = g_subMenu[m_curBtn];
-	//UINT_PTR nCustomID = GenerateMenuID(m_curBtn, menu.GetMenuItemCount());
-	//if (nID == nCustomID) {
-	//	switch (m_curBtn)
-	//	{
-	//	case INTEGER:
-	//	{
-	//		CCustomIntDlg dlg;
-	//		dlg.DoModal();
-	//		break;
-	//	}
-	//	case FLOAT:
-	//	{
-	//		CCustomFloatDlg dlg;
-	//		dlg.DoModal();
-	//		break;
-	//	}
-	//	}
-	//}
-	//else { //否则记录点击的菜单ID
-	//	m_curID = nID;
-	//}
+	
+	//如果点击了自定义
+	switch (nID) {
+		case IDM_intCustom:{
+			CCustomIntDlg dlg;
+			if (IDOK == dlg.DoModal()) {
+				m_param = IntParam(dlg.m_a, dlg.m_b);
+			}
+			break;
+		}
+	}
 
 }
 

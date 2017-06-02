@@ -13,8 +13,8 @@
 #include <random>
 #include <sstream>
 //#include <limits>
-#include "CustomIntDlg.h"
-#include "CustomFloatDlg.h"
+//#include "CustomIntDlg.h"
+//#include "CustomFloatDlg.h"
 
 //#include <functional>
 
@@ -22,17 +22,17 @@
 #define new DEBUG_NEW
 #endif
 
-enum class RandType {
-	INT,
-	NEGATIVE_INT,
-	POSITIVE_INT,
-	INT_RANGE,
-	FLOAT,
-	NEGATIVE_FLOAT,
-	POSITIVE_FLOAT,
-	FLOAT_RANGE,
-	RandType_Buf
-};
+//enum class RandType {
+//	INT,
+//	NEGATIVE_INT,
+//	POSITIVE_INT,
+//	INT_RANGE,
+//	FLOAT,
+//	NEGATIVE_FLOAT,
+//	POSITIVE_FLOAT,
+//	FLOAT_RANGE,
+//	RandType_Buf
+//};
 
 //namespace {
 	//using std::multimap;
@@ -44,6 +44,7 @@ enum class RandType {
 
 	using FmtType = CMyFmtSplitBtn::FmtType;
 	using FmtContext = CMyFmtSplitBtn::FmtContext;
+	using IntParam = CMyFmtSplitBtn::IntParam;
 	//using MenuItem = CMyFmtSplitBtn::MenuItem;
 
 	bool MismatchFunc(const FmtContext& l, const FmtContext& r)
@@ -74,6 +75,10 @@ enum class RandType {
 	CMenu g_menu; 
 	CMenu g_subMenu[FmtType::FmtTypeBuf];//必须附加到主菜单
 	//一个按钮绑定的菜单
+	struct BindMenu {
+		UINT menuID;//菜单标识符
+		
+	};
 	//std::map<FmtType, std::vector<MenuItem>>	g_mapMenuOfBtn;
 	vector<CString>	g_fixStr;//固定不变的字符串
 //}
@@ -208,12 +213,12 @@ void CStringCopyFactoryDlg::doReadMenu()
 	g_menu.CreateMenu();
 	if (bDefault) {
 		vector<vector<CString>> defaultStr = {
-			{ _T("随机正整数"),_T("随机整数"), _T("自定义...") },
-			{ _T("随机正浮点数"),_T("随机浮点数"), _T("自定义...") }
+			{ /*_T("随机正整数"),_T("随机整数"),*/ _T("自定义...") }/*,
+			{ _T("随机正浮点数"),_T("随机浮点数"), _T("自定义...") }*/
 		};
 		vector<vector<int>> defaultID = {
-			{ IDM_RandPositiveInt, IDM_RandInt, IDM_CustomInt },
-			{ IDM_RandPositiveFloat,IDM_RandFloat,IDM_CustomFloat }
+			{ IDM_intCustom }/*,
+			{ IDM_RandPositiveFloat,IDM_RandFloat,IDM_CustomFloat }*/
 		};
 		//vector<vector<MenuItem>> defaultMenuItem = {
 		//	{ _T("随机正整数"), GenerateMenuID(0,0), 2 * sizeof(int),  },
@@ -252,67 +257,68 @@ void CStringCopyFactoryDlg::doReadMenu()
 //}
 
 //随机生成范围内的整数
-int RandInt(RandType t, int a, int b)
+int RandInt(int a, int b)
 {
 	static std::default_random_engine e;
-	std::uniform_int_distribution<int> u;
-	switch (t)
-	{
-	case RandType::INT:
-	{
-		std::uniform_int_distribution<int> u;
-		return u(e);
-	}
-	case RandType::POSITIVE_INT:
-	{
-		std::uniform_int_distribution<int> u(0,INT_MAX);
-		unsigned n = u(e);
-		//TRACE(_T("RandInt = %ld"), n);
-		return n;
-	}
-	case RandType::NEGATIVE_INT:
-	{
-		std::uniform_int_distribution<int> u(INT_MIN, 0);
-		return u(e);
-	}
-	case RandType::INT_RANGE:
-	{
-		std::uniform_int_distribution<int> u(a, b);
-		return u(e);
-	}
-	}
-	return 0;
+	std::uniform_int_distribution<int> u(a,b);
+	return u(e);
+	//switch (t)
+	//{
+	//case RandType::INT:
+	//{
+	//	std::uniform_int_distribution<int> u;
+	//	return u(e);
+	//}
+	//case RandType::POSITIVE_INT:
+	//{
+	//	std::uniform_int_distribution<int> u(0,INT_MAX);
+	//	unsigned n = u(e);
+	//	//TRACE(_T("RandInt = %ld"), n);
+	//	return n;
+	//}
+	//case RandType::NEGATIVE_INT:
+	//{
+	//	std::uniform_int_distribution<int> u(INT_MIN, 0);
+	//	return u(e);
+	//}
+	//case RandType::INT_RANGE:
+	//{
+	//	std::uniform_int_distribution<int> u(a, b);
+	//	return u(e);
+	//}
+	//}
+	//return 0;
 }
 
 //随机生成范围内的小数
-float RandFloat(RandType t, float a, float b)
-{
-	static std::default_random_engine e;
-	switch (t)
-	{
-	case RandType::FLOAT:
-	{
-		std::uniform_real_distribution<float> u(-1000000,1000000);
-		return u(e);
-	}
-	case RandType::POSITIVE_FLOAT:
-	{
-		std::uniform_real_distribution<float> u(0,1000000);
-		return u(e);
-	}
-	case RandType::NEGATIVE_FLOAT:
-	{
-		std::uniform_real_distribution<float> u(-1000000, 0);
-		return u(e);
-	}
-	case RandType::FLOAT_RANGE:
-	{
-		std::uniform_real_distribution<float> u(a, b);
-		return u(e);
-	}
-	}
-	return 0.0f;
-}
+//float RandFloat(RandType t, float a, float b)
+//{
+//	static std::default_random_engine e;
+//	switch (t)
+//	{
+//	case RandType::FLOAT:
+//	{
+//		std::uniform_real_distribution<float> u(-1000000,1000000);
+//		return u(e);
+//	}
+//	case RandType::POSITIVE_FLOAT:
+//	{
+//		std::uniform_real_distribution<float> u(0,1000000);
+//		return u(e);
+//	}
+//	case RandType::NEGATIVE_FLOAT:
+//	{
+//		std::uniform_real_distribution<float> u(-1000000, 0);
+//		return u(e);
+//	}
+//	case RandType::FLOAT_RANGE:
+//	{
+//		std::uniform_real_distribution<float> u(a, b);
+//		return u(e);
+//	}
+//	}
+//	return 0.0f;
+//}
 
 void CStringCopyFactoryDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
@@ -445,20 +451,21 @@ void CStringCopyFactoryDlg::doCreateFmtButton()
 		LONG l = GetDialogBaseUnits();
 		int x = LOWORD(l);//8
 		int y = HIWORD(l);//16
+		int h = y * 3 / 2;//按钮高度
 		RECT rcEdit;//编辑框左下坐标
 		GetDlgItem(IDC_EDIT1)->GetWindowRect(&rcEdit);
 		ScreenToClient(&rcEdit);
 		CFont* pFont = GetFont();//对话框使用的字体
 
 		int left = rcEdit.left;//按钮左下基准坐标
-		int top = rcEdit.bottom + 10;
+		//int top = rcEdit.bottom + 10;
 		int prevLine = -1;//上一个行号
 		int idx = 0;//按钮索引
 
 		for (auto& ctx : m_vecExistFmt) {
 			auto& spBtn = ctx.spBtn; //这里不是引用，永远创建不了
-			int w = 0, h = y * 3 / 2;//按钮宽高、左上坐标
-			top += (h + 5) * ctx.line;
+			int w = 0;//按钮宽、左上坐标
+			int top = rcEdit.bottom + 10 + (h + 5) * ctx.line;
 			if (prevLine != ctx.line) {
 				left = rcEdit.left;//新行
 				prevLine = ctx.line;
@@ -629,22 +636,21 @@ void CStringCopyFactoryDlg::OnClickedGenerate()
 			UINT_PTR menuID = spBtn->m_curID;
 
 			auto& data = spBtn->m_data;//这个按钮对应的数据
+			IntParam& param = boost::get<IntParam>(spBtn->m_param);
+			//boost::apply_visitor(value_visit(param), spBtn->m_param);
+			data = RandInt(param.a, param.b);
 			//调用当前菜单项函数，生成结果，保存在CSplitButton::m_data中
-			switch (menuID)
-			{
-			case IDM_RandPositiveInt://随机正整数
-				data = RandInt(RandType::POSITIVE_INT);
-				break;
-			case IDM_RandInt://随机整数
-				data = RandInt(RandType::INT);
-				break;
-			case IDM_CustomInt://自定义
-			{
-				CCustomIntDlg dlg;
-				dlg.DoModal();
-				break;
-			}
-			}
+			//switch (menuID)
+			//{
+			//case IDM_intCustom://自定义
+			//{
+			//	CCustomIntDlg dlg;
+			//	if (IDOK == dlg.DoModal()) {
+			//		data = RandInt(dlg.m_a, dlg.m_b);
+			//	}
+			//	break;
+			//}
+			//}
 
 			//拼接数据
 			std::wostringstream os;

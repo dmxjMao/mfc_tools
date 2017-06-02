@@ -82,9 +82,9 @@ enum class RandType;
 //生成按钮标识符的方式
 //UINT_PTR GenerateMenuID(int nBtnIdx, int nItemIdx);
 //随机生成范围内的整数
-int RandInt(RandType t, int a = 0, int b = 0);
+int RandInt(int a, int b);
 //随机生成范围内的小数
-float RandFloat(RandType t, float a = 0, float b = 0);
+//float RandFloat(RandType t, float a = 0, float b = 0);
 
 class stream_visit : public boost::static_visitor<> {
 	std::wostream& m_os;
@@ -95,3 +95,11 @@ public:
 		m_os << t;
 	}
 };
+
+//class value_visit : public boost::static_visitor<> {
+//public:
+//	template<typename T>
+//	void operator(T& ret)(T& t) const {
+//		ret = t;
+//	}
+//};

@@ -20,4 +20,8 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
+	virtual void OnOK();
+public:
+	int m_a; //随机整数的边界[a,b]
+	int m_b;
 };
